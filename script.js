@@ -2,7 +2,7 @@
 // GROQ AI CONFIGURATION - Multi-Model Fallback System
 // ═══════════════════════════════════════════════════════════════════
 
-const GROQ_API_KEY = 'APIKEYGROQ';
+const GROQ_API_KEY = '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';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 
 const GROQ_MODELS = [
