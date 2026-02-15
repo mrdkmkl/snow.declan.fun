@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snow Day Predictor 1.0</title>
+    <link rel="stylesheet" href="styles.css">
+	<link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="favicons/images/favicon.ico">
+</head>
+<body>
+    <!-- Snow Animation -->
+    <div class="snowflakes" id="snowflakes" aria-hidden="true">
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <!-- Input Screen -->
+    <div class="screen" id="inputScreen">
+        <div class="container">
+            <div class="header">
+                <div class="header-icon">❄️</div>
+                <h1>Snow Day Predictor</h1>
+                <p>AI-powered weather analysis with radar & alerts</p>
+            </div>
+
+            <div class="card">
+                <div class="input-group">
+                    <label for="location">Enter Your Location</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="text" 
+                            id="location" 
+                            placeholder="City, State or ZIP code"
+                            autocomplete="off"
+                        >
+                        <button id="analyzeBtn" onclick="analyzeSnowDay()">
+                            <span class="btn-text">Analyze Weather</span>
+                            <span class="btn-icon">🔍</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="error" id="errorMsg">
+                    <span>⚠️</span>
+                    <span id="errorText"></span>
+                </div>
+
+                <div class="features">
+                    <div class="feature">
+                        <span class="feature-icon">🎯</span>
+                        <div class="feature-content">
+                            <div class="feature-title">Radar Analysis</div>
+                            <div class="feature-desc">Real-time precipitation data</div>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🚨</span>
+                        <div class="feature-content">
+                            <div class="feature-title">Weather Alerts</div>
+                            <div class="feature-desc">Watches & warnings</div>
+                        </div>
+                    </div>
+                    <div class="feature">
+                        <span class="feature-icon">🤖</span>
+                        <div class="feature-content">
+                            <div class="feature-title">Smart Analysis</div>
+                            <div class="feature-desc">Intelligent predictions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="info-box">
+                    <div class="info-icon">💡</div>
+                    <div class="info-text">
+                        Our system analyzes temperature, precipitation, wind conditions, and official weather alerts to determine snow day probability
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer">
+                <div class="footer-icons">☁️ 🌨️ ❄️</div>
+                <div>Powered by Open-Meteo & Weather.gov</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

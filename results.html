@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snow Day Results 1.0</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="apple-touch-icon" sizes="180x180" href="favicons/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="favicons/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="favicons/favicon-16x16.png">
+    <link rel="icon" type="image/x-icon" href="favicons/images/favicon.ico">
+</head>
+<body class="results-body">
+    <!-- Dynamic Snow Animation -->
+    <div class="snowflakes" id="resultSnowflakes" aria-hidden="true">
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+        <div class="snowflake">❅</div>
+        <div class="snowflake">❆</div>
+    </div>
+
+    <div class="screen" id="resultsScreen">
+        <div class="container results-container">
+            <button class="back-btn" onclick="goBack()">
+                <span class="back-arrow">←</span>
+                <span>New Search</span>
+            </button>
+
+            <div class="results-card">
+                <!-- Percentage Display -->
+                <div class="percentage-display">
+                    <div class="location-name" id="resultLocation">Loading...</div>
+                    <div class="percentage-circle">
+                        <svg class="progress-ring" width="240" height="240">
+                            <defs>
+                                <linearGradient id="progressGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                    <stop offset="0%" style="stop-color:#3b82f6;stop-opacity:1" />
+                                    <stop offset="100%" style="stop-color:#1d4ed8;stop-opacity:1" />
+                                </linearGradient>
+                            </defs>
+                            <circle class="progress-ring-bg" stroke="#e5e7eb" stroke-width="18" fill="transparent" r="100" cx="120" cy="120"/>
+                            <circle class="progress-ring-fill" id="progressCircle" stroke="url(#progressGradient)" stroke-width="18" fill="transparent" r="100" cx="120" cy="120"/>
+                        </svg>
+                        <div class="percentage-text">
+                            <span class="percentage-number" id="percentageNumber">0</span>
+                            <span class="percentage-symbol">%</span>
+                        </div>
+                    </div>
+                    <div class="snow-day-verdict" id="verdict">Calculating...</div>
+                    <div class="confidence-badge" id="confidenceBadge">Analyzing</div>
+                </div>
+
+                <!-- Alerts Section -->
+                <div class="alerts-section" id="alertsSection"></div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats">
+                    <div class="quick-stat">
+                        <div class="stat-icon">🌡️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="quickTemp">--</div>
+                            <div class="stat-label">Temperature</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="stat-icon">❄️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="quickSnow">--</div>
+                            <div class="stat-label">Accumulation</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="stat-icon">💨</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="quickWind">--</div>
+                            <div class="stat-label">Wind Speed</div>
+                        </div>
+                    </div>
+                    <div class="quick-stat">
+                        <div class="stat-icon">👁️</div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="quickVis">--</div>
+                            <div class="stat-label">Visibility</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Detailed Conditions -->
+                <div class="conditions-section">
+                    <h2>📊 Comprehensive Weather Analysis</h2>
+                    
+                    <div class="condition-grid">
+                        <div class="condition-item">
+                            <div class="condition-icon">🌡️</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Temperature Range</div>
+                                <div class="condition-value" id="temperature">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">🥶</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Feels Like</div>
+                                <div class="condition-value" id="feelsLike">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">❄️</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Snow Accumulation</div>
+                                <div class="condition-value" id="accumulation">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">📈</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Snow Rate</div>
+                                <div class="condition-value" id="snowRate">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">💨</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Wind Speed</div>
+                                <div class="condition-value" id="windSpeed">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">🌪️</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Wind Chill</div>
+                                <div class="condition-value" id="windChill">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">💧</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Precipitation</div>
+                                <div class="condition-value" id="precipitation">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">💦</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Humidity</div>
+                                <div class="condition-value" id="humidity">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">👁️</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Visibility</div>
+                                <div class="condition-value" id="visibility">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">☁️</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Sky Conditions</div>
+                                <div class="condition-value" id="skyConditions">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">⏰</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Peak Snow Time</div>
+                                <div class="condition-value" id="peakTime">--</div>
+                            </div>
+                        </div>
+
+                        <div class="condition-item">
+                            <div class="condition-icon">⏱️</div>
+                            <div class="condition-details">
+                                <div class="condition-label">Snow Duration</div>
+                                <div class="condition-value" id="duration">--</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analysis-box">
+                        <h3>🤖 Detailed Analysis</h3>
+                        <p id="aiReasoning">Loading analysis...</p>
+                    </div>
+
+                    <div class="analysis-box radar-analysis">
+                        <h3>📡 Precipitation & Radar Analysis</h3>
+                        <p id="radarAnalysis">Loading radar data...</p>
+                    </div>
+
+                    <div class="analysis-box timing-analysis">
+                        <h3>⏰ Timing & Duration Analysis</h3>
+                        <p id="timingAnalysis">Loading timing data...</p>
+                    </div>
+
+                    <div class="advisory-box">
+                        <h3>⚠️ Safety Advisory & Recommendations</h3>
+                        <p id="advisory">Loading recommendations...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="results.js"></script>
+</body>
+</html>
