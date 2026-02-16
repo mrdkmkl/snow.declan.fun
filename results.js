@@ -1,5 +1,6 @@
 // ═══════════════════════════════════════════════════════════════════
-// RESULTS PAGE - Enhanced with Fallbacks
+// SNOW DAY PREDICTOR - RESULTS PAGE
+// Dynamic Snowfall & Alert-Based Background Colors
 // ═══════════════════════════════════════════════════════════════════
 
 window.addEventListener('DOMContentLoaded', function() {
@@ -11,7 +12,7 @@ window.addEventListener('DOMContentLoaded', function() {
     }
     
     const data = JSON.parse(resultsData);
-    console.log('Results loaded with radar & alerts');
+    console.log('Results loaded with advanced visual effects');
     analyzeAndDisplay(data);
 });
 
@@ -19,33 +20,125 @@ function goBack() {
     window.location.href = 'index.html';
 }
 
-function setDynamicVisuals(percentage) {
+// ═══════════════════════════════════════════════════════════════════
+// DYNAMIC VISUAL EFFECTS - Snow & Background Based on Percentage & Alerts
+// ═══════════════════════════════════════════════════════════════════
+function setDynamicVisuals(percentage, alertCount) {
+    console.log(`Setting dynamic visuals: ${percentage}%, ${alertCount} alerts`);
+    
+    const snowflakesContainer = document.querySelector('#resultSnowflakes');
     const snowflakes = document.querySelectorAll('#resultSnowflakes .snowflake');
-    const speedMultiplier = 1 + (percentage / 33.33);
-    
-    snowflakes.forEach((snowflake, index) => {
-        const baseDuration = 10 + (index % 5);
-        const newDuration = baseDuration / speedMultiplier;
-        snowflake.style.animationDuration = `${newDuration}s`;
-    });
-    
     const body = document.querySelector('.results-body');
     
-    if (percentage >= 90) {
-        body.style.background = 'linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 50%, #f1f5f9 100%)';
-    } else if (percentage >= 75) {
-        body.style.background = 'linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #cbd5e1 100%)';
-    } else if (percentage >= 60) {
-        body.style.background = 'linear-gradient(135deg, #475569 0%, #64748b 50%, #94a3b8 100%)';
-    } else if (percentage >= 40) {
-        body.style.background = 'linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%)';
-    } else if (percentage >= 20) {
-        body.style.background = 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)';
+    // ═══════════════════════════════════════════════════════════════
+    // SNOWFLAKE VISIBILITY & ANIMATION
+    // ═══════════════════════════════════════════════════════════════
+    
+    // RULE 1: No snow at 0% or <1%
+    if (percentage === 0 || percentage < 1) {
+        console.log('0% or <1% - No snowflakes');
+        snowflakesContainer.style.display = 'none';
     } else {
-        body.style.background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)';
+        snowflakesContainer.style.display = 'block';
+        
+        // RULE 2: Number of visible snowflakes based on percentage
+        let visibleCount;
+        if (percentage <= 20) {
+            visibleCount = 5;
+        } else if (percentage <= 40) {
+            visibleCount = 10;
+        } else if (percentage <= 60) {
+            visibleCount = 15;
+        } else if (percentage <= 80) {
+            visibleCount = 20;
+        } else {
+            visibleCount = 30; // All snowflakes
+        }
+        
+        console.log(`Showing ${visibleCount} snowflakes`);
+        
+        // Show/hide snowflakes
+        snowflakes.forEach((snowflake, index) => {
+            if (index < visibleCount) {
+                snowflake.style.display = 'block';
+                snowflake.style.opacity = '0.8';
+            } else {
+                snowflake.style.display = 'none';
+            }
+        });
+        
+        // RULE 3: Snow speed based on percentage (1x to 4x)
+        const speedMultiplier = 1 + (percentage / 33.33);
+        
+        snowflakes.forEach((snowflake, index) => {
+            if (index < visibleCount) {
+                const baseDuration = 10 + (index % 5); // 10-14 seconds
+                const newDuration = baseDuration / speedMultiplier;
+                snowflake.style.animationDuration = `${newDuration}s`;
+            }
+        });
+        
+        console.log(`Snow speed: ${speedMultiplier.toFixed(2)}x`);
     }
     
+    // ═══════════════════════════════════════════════════════════════
+    // BACKGROUND COLOR - Based on Percentage & Alerts
+    // ═══════════════════════════════════════════════════════════════
+    
+    // Calculate red intensity based on alerts (1 alert = 20% red)
+    const redIntensity = Math.min(alertCount * 0.2, 1.0); // Cap at 100%
+    
+    let background;
+    
+    if (alertCount > 0) {
+        // ALERT MODE - Red gradient based on alert count
+        console.log(`Alert mode: ${alertCount} alerts = ${(redIntensity * 100).toFixed(0)}% red`);
+        
+        if (alertCount >= 5) {
+            // Extreme alert (5+ alerts) - Very red
+            background = 'linear-gradient(135deg, #7f1d1d 0%, #991b1b 50%, #b91c1c 100%)';
+        } else if (alertCount >= 4) {
+            // 4 alerts - 80% red
+            background = 'linear-gradient(135deg, #991b1b 0%, #b91c1c 50%, #dc2626 100%)';
+        } else if (alertCount >= 3) {
+            // 3 alerts - 60% red
+            background = 'linear-gradient(135deg, #b91c1c 0%, #dc2626 50%, #ef4444 100%)';
+        } else if (alertCount >= 2) {
+            // 2 alerts - 40% red
+            background = 'linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #f87171 100%)';
+        } else {
+            // 1 alert - 20% red (light red)
+            background = 'linear-gradient(135deg, #ef4444 0%, #f87171 50%, #fca5a5 100%)';
+        }
+    } else {
+        // NO ALERTS MODE - Blue gradient based on percentage (lighter = higher %)
+        console.log('No alerts - standard blue gradient');
+        
+        if (percentage >= 90) {
+            // Extreme - Nearly white (whiteout)
+            background = 'linear-gradient(135deg, #cbd5e1 0%, #e2e8f0 50%, #f1f5f9 100%)';
+        } else if (percentage >= 75) {
+            // Very High - Light gray-blue
+            background = 'linear-gradient(135deg, #64748b 0%, #94a3b8 50%, #cbd5e1 100%)';
+        } else if (percentage >= 60) {
+            // High - Medium gray-blue
+            background = 'linear-gradient(135deg, #475569 0%, #64748b 50%, #94a3b8 100%)';
+        } else if (percentage >= 40) {
+            // Medium - Blue-gray
+            background = 'linear-gradient(135deg, #334155 0%, #475569 50%, #64748b 100%)';
+        } else if (percentage >= 20) {
+            // Low - Dark blue
+            background = 'linear-gradient(135deg, #1e293b 0%, #334155 50%, #475569 100%)';
+        } else {
+            // Very Low - Very dark blue
+            background = 'linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%)';
+        }
+    }
+    
+    body.style.background = background;
     body.style.transition = 'background 1.5s ease-in-out';
+    
+    console.log('Visual effects applied');
 }
 
 function getWeatherDescription(code) {
@@ -68,10 +161,10 @@ function calculateWindChill(tempF, windMph) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// HYBRID ANALYSIS - AI + Logic + Radar + Alerts
+// ADVANCED LOGIC SYSTEM - Precise Calculations
 // ═══════════════════════════════════════════════════════════════════
 function analyzeWeatherData(weatherData, alerts, radarData, alertAnalysis, aiAnalysis) {
-    console.log('=== HYBRID ANALYSIS: AI + Logic + Radar + Alerts ===');
+    console.log('=== ADVANCED LOGIC ANALYSIS ===');
     
     let snowDayScore = 0;
     let reasoning = [];
@@ -80,108 +173,204 @@ function analyzeWeatherData(weatherData, alerts, radarData, alertAnalysis, aiAna
     const current = weatherData.current;
     const hourly = weatherData.hourly;
     
-    // Start with AI if available
-    if (aiAnalysis && aiAnalysis.snowDayProbability) {
-        console.log('Using AI as foundation:', aiAnalysis.snowDayProbability);
-        snowDayScore = aiAnalysis.snowDayProbability;
-        if (aiAnalysis.keyFactors) reasoning.push(...aiAnalysis.keyFactors);
-    } else {
-        console.log('No AI - using logic');
-        snowDayScore = 50;
-    }
-    
-    // LOGIC ADJUSTMENTS
+    // CRITICAL TEMPERATURE CHECK
     const currentTemp = current.temperature_2m;
-    let logicAdjustment = 0;
+    const avgTemp24Hr = hourly.temperature_2m.slice(0, 24).reduce((sum, val) => sum + val, 0) / 24;
+    const highTemp = Math.max(...hourly.temperature_2m.slice(0, 24));
     
-    // Temperature
-    if (currentTemp <= 20) {
-        logicAdjustment += 15;
-        reasoning.push(`Extreme cold at ${Math.round(currentTemp)}°F`);
-    } else if (currentTemp <= 28) {
-        logicAdjustment += 10;
-        reasoning.push(`Very cold at ${Math.round(currentTemp)}°F`);
-    } else if (currentTemp <= 32) {
-        logicAdjustment += 5;
-        reasoning.push(`At freezing point: ${Math.round(currentTemp)}°F`);
-    } else if (currentTemp > 35) {
-        logicAdjustment -= 10;
-        reasoning.push(`Too warm for snow: ${Math.round(currentTemp)}°F`);
+    console.log('Temperature:', { current: currentTemp, avg: avgTemp24Hr, high: highTemp });
+    
+    // RULE 1: Above 60°F = 0%
+    if (currentTemp >= 60 || highTemp >= 60) {
+        console.log('Temperature above 60°F - returning 0%');
+        return {
+            snowDayPercentage: 0,
+            snowDay: false,
+            confidence: 'very high',
+            reasoning: `Temperature is ${Math.round(currentTemp)}°F, far too warm for any snow. No winter weather possible.`,
+            radarAnalysis: 'No snow possible at current temperatures.',
+            timingAnalysis: 'Temperatures remain well above freezing.',
+            accumulation: 'None - too warm',
+            snowRate: 'N/A',
+            temperature: `${Math.round(currentTemp)}°F`,
+            feelsLike: `${Math.round(current.apparent_temperature)}°F`,
+            windSpeed: `${Math.round(current.wind_speed_10m)} mph`,
+            windChill: 'N/A (too warm)',
+            precipitation: 'None expected',
+            visibility: '10+ miles',
+            skyConditions: getWeatherDescription(current.weather_code),
+            humidity: `${Math.round(current.relative_humidity_2m)}%`,
+            peakTime: 'N/A',
+            duration: 'N/A',
+            alerts: [],
+            advisory: '✅ Normal conditions. Far too warm for snow.',
+            rawAlerts: alerts
+        };
     }
     
-    // Snow accumulation
+    // RULE 2: 40°F+ = <1%
+    if (currentTemp >= 40 && avgTemp24Hr >= 38) {
+        console.log('Temperature 40°F+ - returning <1%');
+        snowDayScore = 0.5;
+        reasoning.push(`Temperature ${Math.round(currentTemp)}°F too warm for snow`);
+    } else {
+        snowDayScore = 10;
+    }
+    
+    // SNOW ACCUMULATION
     let totalSnowfall = hourly.snowfall.slice(0, 48).reduce((sum, val) => sum + (val || 0), 0);
-    if (totalSnowfall >= 12) {
-        logicAdjustment += 25;
-        reasoning.push(`Extreme snow: ${totalSnowfall.toFixed(1)}"`);
-    } else if (totalSnowfall >= 8) {
-        logicAdjustment += 20;
-        reasoning.push(`Heavy snow: ${totalSnowfall.toFixed(1)}"`);
-    } else if (totalSnowfall >= 6) {
-        logicAdjustment += 15;
-        reasoning.push(`Significant snow: ${totalSnowfall.toFixed(1)}"`);
-    } else if (totalSnowfall >= 3) {
-        logicAdjustment += 10;
-        reasoning.push(`Moderate snow: ${totalSnowfall.toFixed(1)}"`);
-    } else if (totalSnowfall >= 1) {
-        logicAdjustment += 5;
-        reasoning.push(`Light snow: ${totalSnowfall.toFixed(1)}"`);
-    } else if (totalSnowfall === 0) {
-        logicAdjustment -= 20;
-        reasoning.push('No snow in forecast');
+    let maxSnowRate = Math.max(...hourly.snowfall.slice(0, 48));
+    let snowHours = hourly.snowfall.slice(0, 48).filter(s => s > 0).length;
+    let heavySnowHours = hourly.snowfall.slice(0, 48).filter(s => s >= 0.5).length;
+    
+    console.log('Snow:', { total: totalSnowfall, maxRate: maxSnowRate, hours: snowHours });
+    
+    // Temperature scoring
+    if (currentTemp <= 40) {
+        if (currentTemp <= 15) {
+            snowDayScore += 27;
+            reasoning.push(`Extreme cold ${Math.round(currentTemp)}°F`);
+        } else if (currentTemp <= 20) {
+            snowDayScore += 21;
+            reasoning.push(`Very cold ${Math.round(currentTemp)}°F`);
+        } else if (currentTemp <= 25) {
+            snowDayScore += 16;
+            reasoning.push(`Cold ${Math.round(currentTemp)}°F`);
+        } else if (currentTemp <= 30) {
+            snowDayScore += 12;
+            reasoning.push(`Below freezing ${Math.round(currentTemp)}°F`);
+        } else if (currentTemp <= 32) {
+            snowDayScore += 7;
+            reasoning.push(`At freezing ${Math.round(currentTemp)}°F`);
+        } else if (currentTemp <= 35) {
+            snowDayScore += 2;
+        }
     }
     
-    // RADAR DATA ADJUSTMENTS
-    if (radarData && radarData.precipitationIntensity) {
-        console.log('Applying radar adjustments...');
-        if (radarData.precipitationIntensity === 'heavy') {
-            logicAdjustment += 15;
-            reasoning.push(`Radar: Heavy precipitation intensity`);
-        } else if (radarData.precipitationIntensity === 'moderate') {
-            logicAdjustment += 8;
-            reasoning.push(`Radar: Moderate precipitation intensity`);
+    // WIND CHILL ANALYSIS
+    const maxWindSpeed = Math.max(...hourly.wind_speed_10m.slice(0, 48));
+    const windChill = calculateWindChill(currentTemp, maxWindSpeed);
+    
+    if (windChill < 0) {
+        const degreesBelow0 = Math.abs(windChill);
+        if (windChill <= -8) {
+            const degreesBelow8 = degreesBelow0 - 8;
+            snowDayScore += degreesBelow8 * 5;
+            snowDayScore += 8;
+            reasoning.push(`Extreme wind chill ${windChill}°F (+${degreesBelow8 * 5 + 8}%)`);
+        } else {
+            snowDayScore += degreesBelow0 * 1;
+            reasoning.push(`Severe wind chill ${windChill}°F (+${degreesBelow0}%)`);
         }
-        
-        if (radarData.continuousHours >= 12) {
-            logicAdjustment += 12;
-            reasoning.push(`Radar: ${radarData.continuousHours}hr continuous snow`);
-        } else if (radarData.continuousHours >= 6) {
-            logicAdjustment += 7;
-            reasoning.push(`Radar: ${radarData.continuousHours}hr snow duration`);
+    }
+    
+    // Snow accumulation scoring
+    if (totalSnowfall >= 18) {
+        snowDayScore += 36;
+        reasoning.push(`Extreme snow ${totalSnowfall.toFixed(1)}" (+35%)`);
+    } else if (totalSnowfall >= 15) {
+        snowDayScore += 32;
+        reasoning.push(`Major snow ${totalSnowfall.toFixed(1)}" (+32%)`);
+    } else if (totalSnowfall >= 12) {
+        snowDayScore += 28;
+        reasoning.push(`Very heavy snow ${totalSnowfall.toFixed(1)}" (+28%)`);
+    } else if (totalSnowfall >= 10) {
+        snowDayScore += 26;
+        reasoning.push(`Heavy snow ${totalSnowfall.toFixed(1)}" (+25%)`);
+    } else if (totalSnowfall >= 8) {
+        snowDayScore += 22;
+        reasoning.push(`Heavy snow ${totalSnowfall.toFixed(1)}" (+22%)`);
+    } else if (totalSnowfall >= 6) {
+        snowDayScore += 18;
+        reasoning.push(`Significant snow ${totalSnowfall.toFixed(1)}" (+18%)`);
+    } else if (totalSnowfall >= 4) {
+        snowDayScore += 12;
+        reasoning.push(`Moderate snow ${totalSnowfall.toFixed(1)}" (+12%)`);
+    } else if (totalSnowfall >= 3) {
+        snowDayScore += 9;
+        reasoning.push(`Moderate snow ${totalSnowfall.toFixed(1)}" (+9%)`);
+    } else if (totalSnowfall >= 2) {
+        snowDayScore += 6;
+        reasoning.push(`Light-moderate snow ${totalSnowfall.toFixed(1)}" (+6%)`);
+    } else if (totalSnowfall >= 1) {
+        snowDayScore += 3;
+        reasoning.push(`Light snow ${totalSnowfall.toFixed(1)}" (+3%)`);
+    } else if (totalSnowfall === 0) {
+        snowDayScore -= 10;
+        reasoning.push('No snow in forecast (-10%)');
+    }
+    
+    // Snow rate/intensity
+    if (maxSnowRate >= 2.0) {
+        snowDayScore += 16;
+        reasoning.push(`Extreme snow rate ${maxSnowRate.toFixed(1)}"/hr (+15%)`);
+    } else if (maxSnowRate >= 1.5) {
+        snowDayScore += 12;
+        reasoning.push(`Very heavy rate ${maxSnowRate.toFixed(1)}"/hr (+12%)`);
+    } else if (maxSnowRate >= 1.0) {
+        snowDayScore += 9;
+        reasoning.push(`Heavy rate ${maxSnowRate.toFixed(1)}"/hr (+10%)`);
+    } else if (maxSnowRate >= 0.5) {
+        snowDayScore += 6;
+        reasoning.push(`Moderate rate ${maxSnowRate.toFixed(1)}"/hr (+6%)`);
+    }
+    
+    // Duration
+    if (heavySnowHours >= 8) {
+        snowDayScore += 12;
+        reasoning.push(`${heavySnowHours}hr heavy snow (+12%)`);
+    } else if (heavySnowHours >= 4) {
+        snowDayScore += 8;
+        reasoning.push(`${heavySnowHours}hr heavy snow (+8%)`);
+    } else if (snowHours >= 12) {
+        snowDayScore += 9;
+        reasoning.push(`${snowHours}hr snow duration (+10%)`);
+    } else if (snowHours >= 6) {
+        snowDayScore += 6;
+        reasoning.push(`${snowHours}hr snow (+6%)`);
+    }
+    
+    // RADAR DATA
+    if (radarData && radarData.precipitationIntensity) {
+        if (radarData.precipitationIntensity === 'heavy') {
+            snowDayScore += 12;
+            reasoning.push('Radar: Heavy intensity (+12%)');
+        } else if (radarData.precipitationIntensity === 'moderate') {
+            snowDayScore += 6;
+            reasoning.push('Radar: Moderate intensity (+6%)');
         }
         
         if (radarData.movementPattern === 'slow-moving system') {
-            logicAdjustment += 10;
-            reasoning.push(`Radar: Slow-moving system`);
+            snowDayScore += 8;
+            reasoning.push('Radar: Slow-moving (+8%)');
         }
         
         if (radarData.intensityTrend === 'intensifying') {
-            logicAdjustment += 8;
-            reasoning.push(`Radar: Storm intensifying`);
+            snowDayScore += 6;
+            reasoning.push('Radar: Intensifying (+6%)');
         } else if (radarData.intensityTrend === 'weakening') {
-            logicAdjustment -= 5;
-            reasoning.push(`Radar: Storm weakening`);
+            snowDayScore -= 4;
+            reasoning.push('Radar: Weakening (-4%)');
         }
     }
     
-    // ALERT DATA ADJUSTMENTS
+    // WEATHER ALERTS
     if (alertAnalysis) {
-        console.log('Applying alert adjustments...');
         if (alertAnalysis.hasBlizzardWarning) {
-            logicAdjustment += 30;
-            reasoning.push(`🚨 BLIZZARD WARNING - Life-threatening`);
+            snowDayScore += 27;
+            reasoning.push('🚨 BLIZZARD WARNING (+25%)');
             alertsList.push('Blizzard Warning');
         }
         
         if (alertAnalysis.hasWinterStormWarning) {
-            logicAdjustment += 25;
-            reasoning.push(`🚨 WINTER STORM WARNING`);
+            snowDayScore += 22;
+            reasoning.push('🚨 WINTER STORM WARNING (+20%)');
             alertsList.push('Winter Storm Warning');
         }
         
         if (alertAnalysis.hasWinterWeatherAdvisory) {
-            logicAdjustment += 12;
-            reasoning.push(`⚠️ Winter Weather Advisory`);
+            snowDayScore += 12;
+            reasoning.push('⚠️ Winter Weather Advisory (+10%)');
             alertsList.push('Winter Weather Advisory');
         }
         
@@ -194,43 +383,71 @@ function analyzeWeatherData(weatherData, alerts, radarData, alertAnalysis, aiAna
         }
     }
     
-    // Wind & visibility
-    const maxWindSpeed = Math.max(...hourly.wind_speed_10m.slice(0, 48));
-    if (maxWindSpeed >= 35) {
-        logicAdjustment += 10;
-        reasoning.push(`Dangerous winds: ${Math.round(maxWindSpeed)} mph`);
+    // Wind
+    if (maxWindSpeed >= 40) {
+        snowDayScore += 12;
+        reasoning.push(`Extreme winds ${Math.round(maxWindSpeed)}mph (+12%)`);
+    } else if (maxWindSpeed >= 35) {
+        snowDayScore += 9;
+        reasoning.push(`Dangerous winds ${Math.round(maxWindSpeed)}mph (+10%)`);
+    } else if (maxWindSpeed >= 30) {
+        snowDayScore += 8;
+        reasoning.push(`High winds ${Math.round(maxWindSpeed)}mph (+8%)`);
     } else if (maxWindSpeed >= 25) {
-        logicAdjustment += 7;
-        reasoning.push(`Strong winds: ${Math.round(maxWindSpeed)} mph`);
-    } else if (maxWindSpeed >= 20) {
-        logicAdjustment += 5;
+        snowDayScore += 6;
+        reasoning.push(`Strong winds ${Math.round(maxWindSpeed)}mph (+6%)`);
     }
     
+    // Visibility
     const minVisibility = Math.min(...hourly.visibility.slice(0, 48).map(v => v / 5280));
-    if (minVisibility < 0.5) {
-        logicAdjustment += 10;
-        reasoning.push(`Very poor visibility: ${minVisibility.toFixed(1)} mi`);
+    if (minVisibility < 0.25) {
+        snowDayScore += 16;
+        reasoning.push(`Near-zero visibility ${minVisibility.toFixed(2)}mi (+15%)`);
+    } else if (minVisibility < 0.5) {
+        snowDayScore += 12;
+        reasoning.push(`Very poor visibility ${minVisibility.toFixed(1)}mi (+12%)`);
     } else if (minVisibility < 1) {
-        logicAdjustment += 7;
-        reasoning.push(`Poor visibility: ${minVisibility.toFixed(1)} mi`);
+        snowDayScore += 8;
+        reasoning.push(`Poor visibility ${minVisibility.toFixed(1)}mi (+8%)`);
     } else if (minVisibility < 2) {
-        logicAdjustment += 4;
+        snowDayScore += 4;
+        reasoning.push(`Reduced visibility ${minVisibility.toFixed(1)}mi (+4%)`);
     }
     
-    console.log('Total logic adjustment:', logicAdjustment);
+    // Temperature persistence
+    const belowFreezingHours = hourly.temperature_2m.slice(0, 48).filter(t => t <= 32).length;
+    if (belowFreezingHours >= 40) {
+        snowDayScore += 11;
+        reasoning.push(`${belowFreezingHours}hr below freezing (+10%)`);
+    } else if (belowFreezingHours >= 30) {
+        snowDayScore += 7;
+        reasoning.push(`${belowFreezingHours}hr below freezing (+7%)`);
+    } else if (belowFreezingHours >= 24) {
+        snowDayScore += 4;
+        reasoning.push(`${belowFreezingHours}hr below freezing (+5%)`);
+    }
     
-    // Combine AI and Logic
+    // AI adjustment (70% logic, 30% AI)
     if (aiAnalysis && aiAnalysis.snowDayProbability) {
-        snowDayScore += logicAdjustment * 0.4;
-    } else {
-        snowDayScore += logicAdjustment;
+        console.log('AI suggests:', aiAnalysis.snowDayProbability);
+        const blended = (snowDayScore * 0.7) + (aiAnalysis.snowDayProbability * 0.3);
+        console.log('Blending:', snowDayScore, 'with AI', aiAnalysis.snowDayProbability, '=', blended);
+        snowDayScore = blended;
+        
+        if (aiAnalysis.keyFactors) {
+            reasoning.push(...aiAnalysis.keyFactors.slice(0, 2));
+        }
     }
     
     // Cap and round
     snowDayScore = Math.min(100, Math.max(0, snowDayScore));
     snowDayScore = Math.round(snowDayScore * 10) / 10;
     
-    console.log('Final score:', snowDayScore);
+    if (snowDayScore > 0 && snowDayScore < 1 && (totalSnowfall > 0 || currentTemp >= 38)) {
+        snowDayScore = 0.5;
+    }
+    
+    console.log('FINAL SCORE:', snowDayScore);
     
     // Confidence
     let confidence = 'very low';
@@ -242,7 +459,7 @@ function analyzeWeatherData(weatherData, alerts, radarData, alertAnalysis, aiAna
     
     const isSnowDay = snowDayScore >= 55;
     
-    // Generate summaries with fallbacks
+    // Summaries
     let accumulation = 'None expected';
     if (totalSnowfall >= 12) accumulation = `${totalSnowfall.toFixed(1)}" (Extreme)`;
     else if (totalSnowfall >= 8) accumulation = `${totalSnowfall.toFixed(1)}" (Heavy)`;
@@ -250,92 +467,39 @@ function analyzeWeatherData(weatherData, alerts, radarData, alertAnalysis, aiAna
     else if (totalSnowfall >= 1) accumulation = `${totalSnowfall.toFixed(1)}" (Light)`;
     else if (totalSnowfall > 0) accumulation = 'Trace to 1"';
     
-    // SHORT precipitation (max 6 words)
     let precipSummary = 'None expected';
     if (totalSnowfall > 0) {
         if (alertAnalysis && alertAnalysis.hasBlizzardWarning) {
-            precipSummary = 'Blizzard conditions expected';
-        } else if (radarData && radarData.precipitationIntensity === 'heavy') {
+            precipSummary = 'Blizzard conditions';
+        } else if (maxSnowRate >= 1.0) {
             precipSummary = 'Heavy snow likely';
         } else {
             precipSummary = 'Snow expected';
         }
     }
     
-    // FALLBACK REASONING - Always have something to show
-    let finalReasoning = 'No data';
-    if (reasoning.length > 0) {
-        finalReasoning = reasoning.join('. ') + '.';
-    } else {
-        // Generate basic reasoning from data
-        finalReasoning = `Weather analysis for current conditions shows temperature at ${Math.round(currentTemp)}°F ` +
-            `with ${totalSnowfall > 0 ? totalSnowfall.toFixed(1) + ' inches of snow expected' : 'no snow in the forecast'}. ` +
-            `Wind speeds reaching ${Math.round(maxWindSpeed)} mph with visibility at ${minVisibility.toFixed(1)} miles. ` +
-            `${isSnowDay ? 'Conditions favor a snow day.' : 'Conditions do not support a snow day at this time.'}`;
-    }
+    let finalReasoning = reasoning.length > 0 ? reasoning.join('. ') + '.' : 
+        `Conditions: ${Math.round(currentTemp)}°F, ${totalSnowfall.toFixed(1)}" snow, ${Math.round(maxWindSpeed)}mph winds.`;
     
-    // FALLBACK RADAR ANALYSIS - Always have something
-    let radarAnalysisText = 'No radar data available';
-    if (aiAnalysis && aiAnalysis.radarInsight) {
-        radarAnalysisText = aiAnalysis.radarInsight;
-    } else if (radarData && radarData.precipitationIntensity) {
-        radarAnalysisText = `Radar analysis indicates ${radarData.precipitationIntensity} precipitation intensity ` +
-            `with ${radarData.movementPattern}. Storm system is ${radarData.intensityTrend} with ` +
-            `${radarData.continuousHours} hours of continuous snowfall expected. Precipitation coverage ` +
-            `reaches ${radarData.coverage}% in affected areas. ${radarData.snowBands.length > 0 ? 
-            `Multiple snow bands detected with peak intensity reaching ${Math.max(...radarData.snowBands.map(b => b.intensity)).toFixed(1)} inches per hour.` : 
-            'No organized snow bands currently detected.'}`;
-    } else {
-        radarAnalysisText = `Current radar patterns show ${totalSnowfall > 0 ? 'precipitation development' : 'no significant precipitation'} ` +
-            `in the forecast area. Weather systems ${totalSnowfall > 0 ? 'are expected to produce snow' : 'remain favorable for dry conditions'} ` +
-            `over the next 48 hours. Atmospheric conditions ${currentTemp <= 32 ? 'support snow formation' : 'are too warm for snow'}.`;
-    }
+    let radarAnalysisText = radarData && radarData.precipitationIntensity ? 
+        `Radar: ${radarData.precipitationIntensity} precipitation, ${radarData.movementPattern}, ${radarData.intensityTrend}.` :
+        `Radar shows ${totalSnowfall > 0 ? 'snow development' : 'no precipitation'}.`;
     
-    // FALLBACK TIMING/ALERT ANALYSIS - Always have something
-    let timingAnalysisText = 'No timing data available';
-    if (aiAnalysis && aiAnalysis.alertImpact) {
-        timingAnalysisText = aiAnalysis.alertImpact;
-    } else if (alertAnalysis && alertAnalysis.winterAlerts && alertAnalysis.winterAlerts.length > 0) {
-        timingAnalysisText = `Active weather alerts issued by the National Weather Service: ${alertsList.join(', ')}. ` +
-            `Alert severity is ${alertAnalysis.severity} with ${alertAnalysis.urgency} urgency. ` +
-            `Impact assessment indicates ${alertAnalysis.impactScore >= 20 ? 'major' : alertAnalysis.impactScore >= 10 ? 'moderate' : 'minor'} ` +
-            `disruptions expected. ${alertAnalysis.hasBlizzardWarning ? 'Blizzard conditions with life-threatening impacts are forecast.' : 
-            alertAnalysis.hasWinterStormWarning ? 'Significant winter storm impacts expected across the region.' : 
-            'Winter weather conditions may cause travel difficulties.'}`;
-    } else {
-        timingAnalysisText = `No official weather alerts are currently in effect for this location. ` +
-            `Snow is ${totalSnowfall > 0 ? 'expected to develop' : 'not forecast'} within the next 48 hours. ` +
-            `${radarData && radarData.continuousHours > 0 ? 
-            `Duration of snowfall is projected at ${radarData.continuousHours} hours.` : 
-            'Current atmospheric patterns do not support sustained snowfall.'} ` +
-            `Monitor local weather services for any updates or new alerts.`;
-    }
+    let timingAnalysisText = alertsList.length > 0 ? 
+        `Active alerts: ${alertsList.join(', ')}. NWS warnings indicate significant impacts.` :
+        `No alerts. Snow ${totalSnowfall > 0 ? 'expected' : 'not forecast'}.`;
     
-    // FALLBACK ADVISORY - Always have something
-    let advisory = 'Monitor weather conditions';
-    if (aiAnalysis && aiAnalysis.recommendations) {
-        advisory = aiAnalysis.recommendations;
+    let advisory = 'Monitor conditions';
+    if (snowDayScore >= 85) {
+        advisory = '🚨 EXTREME: Do not travel. Life-threatening.';
+    } else if (snowDayScore >= 70) {
+        advisory = '⚠️ DANGEROUS: Avoid travel. Roads impassable.';
+    } else if (snowDayScore >= 55) {
+        advisory = '⚠️ SIGNIFICANT: Travel not recommended.';
+    } else if (snowDayScore >= 35) {
+        advisory = 'ℹ️ MINOR: Drive carefully.';
     } else {
-        if (snowDayScore >= 85) {
-            advisory = '🚨 EXTREME CONDITIONS: Do not travel. Stay indoors. Life-threatening weather conditions expected. ' +
-                'Roads will be impassable. Stock emergency supplies now. Check on vulnerable neighbors. ' +
-                'Have backup heat and power sources ready.';
-        } else if (snowDayScore >= 70) {
-            advisory = '⚠️ DANGEROUS CONDITIONS: Avoid all travel if possible. Roads extremely hazardous. ' +
-                'Stock food, water, medications now. Charge all devices. Have emergency kit ready. ' +
-                'Schools and businesses likely to close.';
-        } else if (snowDayScore >= 55) {
-            advisory = '⚠️ SIGNIFICANT WINTER WEATHER: Travel not recommended. Hazardous road conditions expected. ' +
-                'Prepare emergency supplies. Allow extra time if travel is absolutely necessary. ' +
-                'Monitor weather updates closely.';
-        } else if (snowDayScore >= 35) {
-            advisory = 'ℹ️ WINTER WEATHER POSSIBLE: Some snow may develop. Drive with caution. ' +
-                'Roads could become slippery. Allow extra time for travel. Keep emergency supplies in vehicle.';
-        } else {
-            advisory = '✅ MINIMAL WINTER WEATHER IMPACT: Normal conditions expected. ' +
-                'No significant snow forecast. Continue routine activities as planned. ' +
-                'Stay aware of forecast updates.';
-        }
+        advisory = '✅ MINIMAL: Normal conditions.';
     }
     
     return {
@@ -346,17 +510,17 @@ function analyzeWeatherData(weatherData, alerts, radarData, alertAnalysis, aiAna
         radarAnalysis: radarAnalysisText,
         timingAnalysis: timingAnalysisText,
         accumulation: accumulation,
-        snowRate: 'Varies',
+        snowRate: maxSnowRate > 0 ? `${maxSnowRate.toFixed(1)}"/hr` : 'N/A',
         temperature: `${Math.round(currentTemp)}°F`,
         feelsLike: `${Math.round(current.apparent_temperature)}°F`,
         windSpeed: `${Math.round(maxWindSpeed)} mph`,
-        windChill: `${calculateWindChill(currentTemp, maxWindSpeed)}°F`,
+        windChill: `${windChill}°F`,
         precipitation: precipSummary,
         visibility: `${minVisibility.toFixed(1)} mi`,
         skyConditions: getWeatherDescription(current.weather_code),
         humidity: `${Math.round(current.relative_humidity_2m)}%`,
-        peakTime: radarData && radarData.continuousHours > 0 ? 'See radar analysis' : 'N/A',
-        duration: radarData && radarData.continuousHours > 0 ? `${radarData.continuousHours} hours` : 'N/A',
+        peakTime: snowHours > 0 ? 'See analysis' : 'N/A',
+        duration: `${snowHours} hours`,
         alerts: alertsList,
         advisory: advisory,
         rawAlerts: alerts
@@ -372,21 +536,27 @@ function analyzeAndDisplay(data) {
         data.aiAnalysis
     );
     
-    setDynamicVisuals(analysis.snowDayPercentage);
+    // Count alerts for background color
+    const alertCount = analysis.alerts ? analysis.alerts.length : 0;
+    
+    // Set dynamic visuals with percentage AND alert count
+    setDynamicVisuals(analysis.snowDayPercentage, alertCount);
+    
     displayResults({ location: data.location, ...analysis });
 }
 
 function displayResults(data) {
+    console.log('Displaying results:', data);
+    
     document.getElementById('resultLocation').textContent = data.location;
     
     let displayPercentage = data.snowDayPercentage;
     let percentageText = Math.round(displayPercentage);
     
-    if (displayPercentage > 0 && displayPercentage < 1) {
+    if (displayPercentage === 0) {
+        percentageText = '0';
+    } else if (displayPercentage > 0 && displayPercentage < 1) {
         percentageText = '<1';
-    } else if (displayPercentage === 0) {
-        percentageText = '<1';
-        displayPercentage = 0.5;
     }
     
     const circle = document.getElementById('progressCircle');
@@ -404,7 +574,9 @@ function displayResults(data) {
             clearInterval(timer);
             percentageNumber.textContent = percentageText;
         } else {
-            if (displayPercentage < 1) {
+            if (displayPercentage === 0) {
+                percentageNumber.textContent = '0';
+            } else if (displayPercentage < 1) {
                 percentageNumber.textContent = '<1';
             } else {
                 percentageNumber.textContent = Math.round(currentPercentage);
@@ -476,27 +648,25 @@ function displayResults(data) {
         alertsSection.classList.remove('show');
     }
     
-    // Ensure all fields have content (never empty)
     document.getElementById('temperature').textContent = data.temperature || 'N/A';
     document.getElementById('feelsLike').textContent = data.feelsLike || 'N/A';
-    document.getElementById('accumulation').textContent = data.accumulation || 'None expected';
+    document.getElementById('accumulation').textContent = data.accumulation || 'None';
     document.getElementById('snowRate').textContent = data.snowRate || 'N/A';
     document.getElementById('windSpeed').textContent = data.windSpeed || 'N/A';
     document.getElementById('windChill').textContent = data.windChill || 'N/A';
-    document.getElementById('precipitation').textContent = data.precipitation || 'None expected';
+    document.getElementById('precipitation').textContent = data.precipitation || 'None';
     document.getElementById('humidity').textContent = data.humidity || 'N/A';
     document.getElementById('visibility').textContent = data.visibility || 'N/A';
     document.getElementById('skyConditions').textContent = data.skyConditions || 'Unknown';
     document.getElementById('peakTime').textContent = data.peakTime || 'N/A';
     document.getElementById('duration').textContent = data.duration || 'N/A';
     
-    // CRITICAL: Always show analysis text (never blank)
-    document.getElementById('aiReasoning').textContent = data.reasoning || 'Weather analysis based on current atmospheric conditions and forecast models.';
-    document.getElementById('radarAnalysis').textContent = data.radarAnalysis || 'Radar data is being processed. Check back for detailed precipitation analysis.';
-    document.getElementById('timingAnalysis').textContent = data.timingAnalysis || 'Timing information is being calculated based on forecast models and weather patterns.';
-    document.getElementById('advisory').textContent = data.advisory || 'Monitor local weather forecasts and follow guidance from local authorities.';
+    document.getElementById('aiReasoning').textContent = data.reasoning;
+    document.getElementById('radarAnalysis').textContent = data.radarAnalysis;
+    document.getElementById('timingAnalysis').textContent = data.timingAnalysis;
+    document.getElementById('advisory').textContent = data.advisory;
     
-    console.log('✓ Display complete with all fallbacks!');
+    console.log('✓ Display complete - Score:', displayPercentage);
 }
 
-console.log('✓ Results loaded with comprehensive fallback system');
+console.log('✓ Advanced results script loaded with dynamic visuals');
