@@ -1,7 +1,7 @@
-// ═══════════════════════════════════════════════════════════════════
-// SNOW DAY PREDICTOR - RESULTS PAGE
-// Dynamic Snowfall & Alert-Based Background Colors
-// ═══════════════════════════════════════════════════════════════════
+/// ═══════════════════════════════════════════════════════════════════
+/// SNOW DAY PREDICTOR - RESULTS PAGE
+/// Dynamic Snowfall & Alert-Based Background Colors
+/// ═══════════════════════════════════════════════════════════════════
 
 window.addEventListener('DOMContentLoaded', function() {
     const resultsData = sessionStorage.getItem('snowDayResults');
