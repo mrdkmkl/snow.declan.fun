@@ -6,7 +6,7 @@
 // ═══════════════════════════════════════════════════════════════════
 // CONFIGURATION
 // ═══════════════════════════════════════════════════════════════════
-const GROQ_API_KEY = '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';
+const GROQ_API_KEY = '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';
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const GROQ_MODELS = [
     'llama-3.3-70b-versatile',
